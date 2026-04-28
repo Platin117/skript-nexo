@@ -29,12 +29,6 @@ public class EvtPackUploadEvent extends SkriptEvent {
                 return event.getHash();
             }
         }, 0);
-        EventValues.registerEventValue(NexoPackUploadEvent.class, String.class, new Converter<NexoPackUploadEvent, String>() {
-            @Override
-            public String convert(NexoPackUploadEvent event) {
-                return event.getUrl();
-            }
-        }, 0);
     }
 
     @Override
