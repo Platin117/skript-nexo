@@ -18,26 +18,21 @@ import org.bukkit.event.Event;
 import javax.annotation.Nullable;
 
 @Name("On Pack Upload")
-@Description({"Fires when the resource pack is uploaded."})
-@Examples({"on pack upload:"})
+@Description({ "Fires when the resource pack is uploaded." })
+@Examples({ "on pack upload:" })
 @Since("1.0")
 public class EvtPackUploadEvent extends SkriptEvent {
 
-    @SuppressWarnings("unchecked")
-    private static void register() {
-        SyntaxRegistry syntaxRegistry = SkriptNexo.getAddonInstance().syntaxRegistry();
-        syntaxRegistry.register(BukkitSyntaxInfos.Event.KEY,
-            BukkitSyntaxInfos.Event.builder(EvtPackUploadEvent.class, "Pack Upload")
-                .addEvent(NexoPackUploadEvent.class)
-                .addPatterns("pack upload")
-                .supplier(EvtPackUploadEvent::new)
-                .build());
-        EventValueRegistry evr = SkriptNexo.getAddonInstance().registry(EventValueRegistry.class);
-        evr.register(EventValue.simple(NexoPackUploadEvent.class, String.class, NexoPackUploadEvent::getHash));
-        evr.register(EventValue.simple(NexoPackUploadEvent.class, String.class, NexoPackUploadEvent::getUrl));
+    static {
+        Skript.registerEvent("Pack Upload", EvtPackUploadEvent.class, NexoPackUploadEvent.class, "pack upload");
+        EventValues.registerEventValue(NexoPackUploadEvent.class, String.class,
+                new Converter<NexoPackUploadEvent, String>() {
+                    @Override
+                    public String convert(NexoPackUploadEvent event) {
+                        return event.getHash();
+                    }
+                }, 0);
     }
-
-    static { register(); }
 
     @Override
     public boolean init(Literal<?>[] args, int matchedPattern, SkriptParser.ParseResult parseResult) {
