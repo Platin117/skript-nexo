@@ -23,16 +23,20 @@ import javax.annotation.Nullable;
 @Since("1.0")
 public class EvtPackUploadEvent extends SkriptEvent {
 
-    static {
-        Skript.registerEvent("Pack Upload", EvtPackUploadEvent.class, NexoPackUploadEvent.class, "pack upload");
-        EventValues.registerEventValue(NexoPackUploadEvent.class, String.class,
-                new Converter<NexoPackUploadEvent, String>() {
-                    @Override
-                    public String convert(NexoPackUploadEvent event) {
-                        return event.getHash();
-                    }
-                }, 0);
+    @SuppressWarnings("unchecked")
+    private static void register() {
+        SyntaxRegistry syntaxRegistry = SkriptNexo.getAddonInstance().syntaxRegistry();
+        syntaxRegistry.register(BukkitSyntaxInfos.Event.KEY,
+            BukkitSyntaxInfos.Event.builder(EvtPackUploadEvent.class, "Pack Upload")
+                .addEvent(NexoPackUploadEvent.class)
+                .addPatterns("pack upload")
+                .supplier(EvtPackUploadEvent::new)
+                .build());
+        EventValueRegistry evr = SkriptNexo.getAddonInstance().registry(EventValueRegistry.class);
+        evr.register(EventValue.simple(NexoPackUploadEvent.class, String.class, NexoPackUploadEvent::getHash));
     }
+
+    static { register(); }
 
     @Override
     public boolean init(Literal<?>[] args, int matchedPattern, SkriptParser.ParseResult parseResult) {
